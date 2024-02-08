@@ -1,30 +1,29 @@
-import { ProductProps } from "@/utils/data/products";
-import { ProducCartProps } from "../cart-store";
+import { ProductCartProps } from '@/stores/cart-store';
+import { ProductProps } from '@/utils/data/products';
 
-export function add(products: ProducCartProps[], newProduct: ProductProps){
-    const existingProduct = products.find (({id}) => newProduct === id)
+export function add(products: ProductCartProps[], newProduct: ProductProps) {
+  const existingProduct = products.find(({ id }) => newProduct.id === id);
 
+  if (existingProduct) {
+    return products.map((product) =>
+      product.id === existingProduct.id
+        ? { ...product, quantity: product.quantity + 1 }
+        : product,
+    );
+  }
 
-    if(existingProduct){
-        return products.map((product) => product.id === existingProduct.id?
-        {...product, quantity: product.quantity + 1}: product)
-    }
-
-
-
-    return [...products, {... newProduct, quantity: 1}]
+  return [...products, { ...newProduct, quantity: 1 }];
 }
 
+export function remove(products: ProductCartProps[], productRemoveId: string) {
+  const updatedPorducts = products.map((product) =>
+    product.id === productRemoveId 
+      ? {
+          ...product,
+          quantity: product.quantity > 1 ? product.quantity - 1 : 0,
+        } 
+      : product
+  )
 
-export function remove(products: ProducCartProps[], productRemovedId: string){
-    const updatedProduct = products.map((product) => 
-    product.id === productRemovedId? {
-        ...product,
-        quantity: product.quantity > 1 ? product.quantity - 1 : 0,
-    } : product
-    )
-
-    return updatedProduct.filter((product) => product.quantity > 0)
+  return updatedPorducts.filter((product) => product.quantity > 0 )
 }
-
-
